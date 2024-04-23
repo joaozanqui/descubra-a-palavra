@@ -356,7 +356,7 @@ var restart_btn = document.querySelectorAll(".restart-btn");
 var surrender_btn = document.querySelector(".surrender-btn");
 
 function backToHomePage() {
-    window.location.href = "#";
+    window.location.reload();
 }
 back_btn[0].addEventListener("click", backToHomePage);
 
