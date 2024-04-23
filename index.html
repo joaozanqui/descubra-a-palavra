@@ -34,25 +34,37 @@
                 <h3>Tentativas: <span class="num-tries"></span></h3>
         </div>
         <div id="answersBox"></div>
-        <div id="possibleLetters"></div>
+        <div id="keyboard">
+            <div id="possibleLetters"></div>
+            <div id="keyboardBtns">
+                <div id="backspace" class="keyboard-btns each-letter-box">
+                    <img id="backspace-img" src="utilities/backspace.png" alt="Backspace">
+                </div>
+                <div id="enter" class="keyboard-btns each-letter-box">
+                    <img id="enter-img" src="utilities/enter.png" alt="Enter">
+                </div>
+            </div>
+        </div>
         <div id="buttons">
-            <button class="back-btn">VOLTAR</button>
+            <button class="back-btn">MENU PRINCIPAL</button>
             <button class="restart-btn">REINICIAR</button>
             <button class="surrender-btn">DESISTIR</button>
         </div>
     </section>
 
-    <div id="popup" class="popup">
-        <div class="popup-content">
-            <p><span class="popup-text"></span></p>
-            <button class="back-btn">MENU PRINCIPAL</button>
-            <button class="restart-btn">REINICIAR</button>
+    <div id="popupSurrender" class="popup">
+        <div class="popup-surrender-content">
+            <p><span class="popup-surrender-text"></span></p>
+            <div id="popupBtns">
+                <button class="back-btn">MENU PRINCIPAL</button>
+                <button class="restart-btn">REINICIAR</button>
+            </div>
         </div>
     </div>
 
     <script src="scripts/index.js"></script>
     <!-- <script src="https://joaozanqui.github.io/descubra-a-palavra/scripts/index.js"></script> -->
-    
+
 </body>
 
 </html>

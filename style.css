@@ -142,6 +142,22 @@ button:hover {
 
 /* ---------------------------------- POSSIBLE LETTERS */
 
+#keyboard {
+    display: flex;
+    align-items: end;
+}
+
+#keyboard img {
+    width: 4vh;
+}
+
+.keyboard-btns {
+    height: 5vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 #possibleLetters {
     /* display: flex; */
     /* flex-direction: column; */
@@ -191,36 +207,51 @@ button:hover {
     /* flex-direction: column; */
 }
 
-#buttons button {
+button {
     margin: 0 10px;
+    font-size: 1em;    
 }
 
 /* ------------------------------------- POP UP */ 
 
+
+
 .popup {
     display: none;
-    position: fixed; /* Posicionamento fixo */
+    position: fixed; 
+    background-color: rgba(0, 0, 0, 0.5); 
+    z-index: 1; 
+}
+
+#popupSurrender {
     top: 0;
     left: 0;
-    width: 100%; /* Toma toda a largura */
-    height: 100%; /* Toma toda a altura */
-    background-color: rgba(0, 0, 0, 0.5); /* Fundo semi-transparente */
-    z-index: 1; /* Coloca o pop-up na frente de outros elementos */
-  }
+    width: 100%; 
+    height: 100%;
+}
   
-  .popup-content {
-    background-color: white; /* Cor de fundo */
-    width: 300px; /* Largura */
-    padding: 20px; /* Espaçamento interno */
-    border-radius: 10px; /* Borda arredondada */
-    position: absolute; /* Posicionamento absoluto */
-    top: 50%; /* Posiciona no meio verticalmente */
-    left: 50%; /* Posiciona no meio horizontalmente */
-    transform: translate(-50%, -50%); /* Centraliza */
-  }
-  
-  .close {
-    float: right; /* Flutua para a direita */
-    cursor: pointer; /* Cursor de apontar */
-  }
+.popup-surrender-content {
+    background-color: white; 
+    width: 300px; 
+    padding: 20px;
+    border-radius: 10px; 
+    position: absolute; 
+    top: 50%; 
+    left: 50%; 
+    transform: translate(-50%, -50%); 
+
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+#popupBtns {
+    display: flex;
+    justify-content: space-around;
+}
+
+.close {
+    float: right; 
+    cursor: pointer; 
+}
   

@@ -22,8 +22,7 @@ var answer;
 var answerTryCount;
 /* ------------------------- CREATE GAME STRUCTURE -----------------------*/
 
-var answers_box = document.querySelector("#answersBox");
-var possible_letters = document.querySelector("#possibleLetters");
+var box_letters_arr = [];
 var box_arr = [];
 var letters_box_arr = [];
 
@@ -34,14 +33,11 @@ function gameCreate(createPossibleLetters = true) {
 
     const rangeInput = document.getElementById('rangeInput');
     value = rangeInput.value;
-    // console.log("Numero de letras (value): " + value);
-    if(words.length == 0)
+    if (words.length == 0)
         wordsInValue();
-    // console.log("Palavras possiveis " + words.length + " (words): " + words);
 
     // answer = "FAROL"; 
     answer = randomWord();
-    console.log("Resposta (answer): " + answer);
 
     answerBoxCreate();
     if (createPossibleLetters)
@@ -49,6 +45,8 @@ function gameCreate(createPossibleLetters = true) {
 }
 
 function answerBoxCreate() {
+    var answers_box = document.querySelector("#answersBox");
+
     updateHeaderInformations();
     box_arr = [];
     letters_box_arr = [];
@@ -88,6 +86,9 @@ function answerBoxCreate() {
 }
 
 function possibleLettersCreate() {
+    var keyboard = document.querySelector("#keyboard");
+    var possible_letters = document.querySelector("#possibleLetters");
+
     var lineName;
     for (let i = 0; i < 26; i++) {
 
@@ -114,9 +115,31 @@ function possibleLettersCreate() {
         }
 
         each_letter_box.appendChild(each_letter);
+        box_letters_arr.push(each_letter_box);
         letters_line.appendChild(each_letter_box);
         possible_letters.appendChild(letters_line);
     }
+
+    var enter_btn = document.querySelector("#enter");
+    var backspace_btn = document.querySelector("#backspace");
+
+    enter_btn.addEventListener("click", function (event) {
+        console.log("enter");
+        enterWord();
+    })
+
+    backspace_btn.addEventListener("click", function (event) {
+        console.log("apagar");
+        deleteLetter();
+    })
+
+    box_letters_arr.forEach((box) => {
+        box.addEventListener("click", function (event) {
+            console.log(box)
+            let letter_pressed = box.querySelector("h1").textContent;
+            writeLetter(letter_pressed);
+        })
+    })
 }
 
 /* ------------------------------ GAMEPLAY FUNCTIONS ----------------- */
@@ -160,82 +183,94 @@ function correctAnswer() {
     back_btn[1].addEventListener("click", backToHomePage);
 }
 
-document.addEventListener("keydown", function (event) {
-    if (event.key != "Backspace")
-        backspacePressed = false;
-
-    if ((event.keyCode >= 65 && event.keyCode <= 90)) {
-        let letter = selectedBox.querySelector("h1");
-        let keyPressed = event.key.toLocaleUpperCase();
-        letter.textContent = keyPressed;
-        let timesMoved = 0;
-        do {
-            if (canMove) {
-                timesMoved++;
-                movePosition();
-            }
-            else
-                break;
-            if (selectedBox.querySelector("h1").textContent == "") {
-                break;
-            }
-        } while (timesMoved <= value);
-
-        if (timesMoved > value) {
-            if (position != letter.getAttribute("id"))
-                movePosition("left");
-            canMove = false;
+function writeLetter(letter_pressed) {
+    let letter = selectedBox.querySelector("h1");
+    let keyPressed = letter_pressed.toLocaleUpperCase();
+    letter.textContent = keyPressed;
+    let timesMoved = 0;
+    do {
+        if (canMove) {
+            timesMoved++;
+            movePosition();
         }
-    }
-    else if (event.key === "ArrowRight") {
-        movePosition();
-    }
-    else if (event.key === "ArrowLeft") {
-        movePosition("left");
-    }
-    else if (event.key === "Backspace") {
-        let letter = selectedBox.querySelector("h1");
-        if ((backspacePressed || letter.textContent == "") && position != 0)
+        else
+            break;
+        if (selectedBox.querySelector("h1").textContent == "") {
+            break;
+        }
+    } while (timesMoved <= value);
+
+    if (timesMoved > value) {
+        if (position != letter.getAttribute("id"))
             movePosition("left");
-        letter.textContent = "";
-        backspacePressed = true;
-        canMove = true;
+        canMove = false;
     }
-    else if (event.key === "Enter") {
-        event.preventDefault();
+}
 
-        let isValid = true;
-        let word = '';
+function enterWord() {
+    let isValid = true;
+    let word = '';
 
-        for (let i = 0; i < value; i++) {
-            if (letters_box_arr[i].textContent != "")
-                word += letters_box_arr[i].textContent;
-            else {
-                isValid = false;
-                console.log("Incomplete word");
-            }
-        }
-
-        if (isValid) {
-            if (hasWord(word)) {
-                wordCompare(word);
-                selectTheBox(-1);
-                canMove = true;
-                console.log("Valid Word: " + word);
-                if (word == answer)
-                    correctAnswer();
-                else {
-                    answerBoxCreate();
-                }
-            }
-            else {
-                // funcao de palavra nao existe    
-                console.log("Invalid Word");
-            }
+    for (let i = 0; i < value; i++) {
+        if (letters_box_arr[i].textContent != "")
+            word += letters_box_arr[i].textContent;
+        else {
+            isValid = false;
+            console.log("Incomplete word");
         }
     }
-    else if (event.key == " ") {
-        console.log(event.target);
+
+    if (isValid) {
+        if (hasWord(word)) {
+            wordCompare(word);
+            selectTheBox(-1);
+            canMove = true;
+            if (word == answer)
+                correctAnswer();
+            else {
+                answerBoxCreate();
+            }
+        }
+        else {
+            // funcao de palavra nao existe    
+            console.log("Invalid Word");
+        }
+    }
+}
+
+function deleteLetter() {
+    let letter = selectedBox.querySelector("h1");
+    if ((backspacePressed || letter.textContent == "") && position != 0)
+        movePosition("left");
+    letter.textContent = "";
+    backspacePressed = true;
+    canMove = true;
+}
+
+document.addEventListener("keydown", function (event) {
+    if (document.querySelector("#gamePage").style.display != "none") {
+        if (event.key != "Backspace")
+            backspacePressed = false;
+
+        if ((event.keyCode >= 65 && event.keyCode <= 90)) {
+            writeLetter(event.key);
+        }
+        else if (event.key === "ArrowRight") {
+            movePosition();
+        }
+        else if (event.key === "ArrowLeft") {
+            movePosition("left");
+        }
+        else if (event.key === "Backspace") {
+            deleteLetter();
+        }
+        else if (event.key === "Enter") {
+            event.preventDefault();
+            enterWord();
+        }
+        else if (event.key == " ") {
+            console.log(event.target);
+        }
     }
 });
 
@@ -255,8 +290,6 @@ function removeAccents(word) {
 }
 
 function wordsInValue() {
-    console.log("entrouuuen");
-    // readTextFile("https://joaozanqui.github.io/descubra-a-palavra/words.txt");
     readTextFile("words.txt");
     function readTextFile(file) {
         var rawFile = new XMLHttpRequest();
@@ -369,7 +402,6 @@ function restartGame() {
     }
 
     let letters_to_remove = document.querySelectorAll(".letters-line");
-    console.log(letters_to_remove);
     letters_to_remove.forEach(line_to_remove => {
         line_to_remove.remove();
     });
@@ -388,17 +420,17 @@ surrender_btn.addEventListener("click", surrenderGame);
 
 /* -------------------------- POP UP FUNCTIONS --------------------------- */
 
-var popup = document.getElementById("popup");
+var popup_surrender = document.getElementById("popupSurrender");
 
 function openPopup(text) {
-    popup.style.display = "block";
+    popup_surrender.style.display = "block";
 
-    let popup_text = document.querySelector(".popup-text");
-    popup_text.textContent = text;
+    let popup_surrender_text = document.querySelector(".popup-surrender-text");
+    popup_surrender_text.textContent = text;
 }
 
 function closePopup() {
-    popup.style.display = "none";
+    popup_surrender.style.display = "none";
 }
 
 /* -------------------------- HEADER INSTRUCTIONS --------------------------- */
