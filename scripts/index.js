@@ -256,7 +256,7 @@ function removeAccents(word) {
 
 function wordsInValue() {
     console.log("entrouuuen");
-    readTextFile("../words.txt");
+    readTextFile("https://joaozanqui.github.io/descubra-a-palavra/words.txt");
     function readTextFile(file) {
         var rawFile = new XMLHttpRequest();
         rawFile.open("GET", file, false);
@@ -356,7 +356,7 @@ var restart_btn = document.querySelectorAll(".restart-btn");
 var surrender_btn = document.querySelector(".surrender-btn");
 
 function backToHomePage() {
-    window.location.href = "../index.html";
+    window.location.href = "#";
 }
 back_btn[0].addEventListener("click", backToHomePage);
 
