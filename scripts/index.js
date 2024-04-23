@@ -256,7 +256,8 @@ function removeAccents(word) {
 
 function wordsInValue() {
     console.log("entrouuuen");
-    readTextFile("https://joaozanqui.github.io/descubra-a-palavra/words.txt");
+    // readTextFile("https://joaozanqui.github.io/descubra-a-palavra/words.txt");
+    readTextFile("../words.txt");
     function readTextFile(file) {
         var rawFile = new XMLHttpRequest();
         rawFile.open("GET", file, false);
