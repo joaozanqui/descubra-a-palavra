@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Term.ooo JOAO ZANQUI</title>
+
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+    <section id="homePage">
+        <div class="header">
+            <h1>DESCUBRA A PALAVRA</h1>
+        </div>
+
+        <div class="game">
+            <h3>Escolha o tamanho da palavra:</h3>
+            <input type="range" id="rangeInput" min="1" max="23" value="1" oninput="updateValue(this.value)">
+            <div class="custom-range-container">
+                <div class="custom-range-track"></div>
+                <div class="custom-range-thumb" id="customThumb"></div>
+            </div>
+            <p>Quantidade de letras: <span id="selectedValue">1</span></p>
+            <button class="submit-btn" type="submit" onclick="gameCreate()">JOGAR</button>
+        </div>
+    </section>
+
+    <section id="gamePage" style="display: none;">
+        <div id="infos-box" class="header">
+            <h1>DESCUBRA A PALAVRA</h1>
+            <h3>Existem <span class="num-words"></span> palavras com <span class="num-letters"></span> letras</h2>
+                <h3>Tentativas: <span class="num-tries"></span></h3>
+        </div>
+        <div id="answersBox"></div>
+        <div id="possibleLetters"></div>
+        <div id="buttons">
+            <button class="back-btn">VOLTAR</button>
+            <button class="restart-btn">REINICIAR</button>
+            <button class="surrender-btn">DESISTIR</button>
+        </div>
+    </section>
+
+    <div id="popup" class="popup">
+        <div class="popup-content">
+            <p><span class="popup-text"></span></p>
+            <button class="back-btn">MENU PRINCIPAL</button>
+            <button class="restart-btn">REINICIAR</button>
+        </div>
+    </div>
+    <script src="scripts/index.js"></script>
+</body>
+
+</html>

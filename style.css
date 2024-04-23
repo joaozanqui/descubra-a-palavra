@@ -1,0 +1,226 @@
+:root {
+    --color-1: #7f6f80;
+    --color-2: #9b8386;
+    --color-3: #baafa9;
+    --color-3v2: #baafa9c2;
+    --color-4: #dbdbda;
+    --color-5: #f4f1f4;
+    --green: #07ca67;
+    --yellow: #ffe84d;
+    --red: #fd4d47;
+}
+
+body, html {
+    background-color: var(--color-4);
+    /* background-color: blue; */
+    height: 100%;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* ----------------------------------------- HOME PAGE */
+
+#homePage {
+    /* background-color: red; */
+    text-align: center;
+}
+
+.header {
+    background-color: var(--color-4);
+    border-radius: 10px;
+    color: black;
+    padding: 20px;
+    text-align: center;
+}
+
+section {
+    padding: 20px;
+    background-color: var(--color-5);
+    border-radius: 10px;
+    box-shadow: var(--color-1);
+}
+
+h1, h2, h3 {
+    margin: 10px 0;
+}
+
+input[type="range"] {
+    width: 80%;
+    margin: 10px auto;
+
+    cursor: pointer;
+    background-color: black;
+}
+
+p, span {
+    margin: 10px 0;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: var(--color-3);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: border-radius 0.4s ease;
+}
+
+button:hover {
+    border-radius: 15px;
+}
+
+/* ------------------------------------ GAME PAGE  */
+#gamePage {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    flex-direction: column;
+    align-items: center;
+}
+
+#gamePage > div {
+    margin: 10px;
+}
+
+#infos-box {
+    display: flex;
+    flex-direction: column;
+}
+
+#answersBox {
+    background-color: var(--color-4);
+    /* border: 2px solid blue; */
+
+    width: fit-content;
+    position: relative;
+    
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    padding: 40px;
+    border-radius: 10px;
+}
+
+.each-answer-box {
+    /* background-color: var(--color-4); */
+    /* border: 2px solid black; */
+    /* margin: 1px;
+    width: fit-content; */
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+
+    border: 2px solid black;
+    margin: 2px; /* Adiciona espaço entre os each-answer-box */
+    width: fit-content; /* Ajusta a largura ao tamanho dos each-box */
+    height: fit-content; /* Ajusta a altura ao tamanho dos each-box */
+    /* padding: 5px; */
+    /* border-radius: 10px; */
+}
+
+.each-box {
+    background-color: var(--color-3);
+    width: 50px;
+    height: 50px;
+}
+
+.selectedBox {
+    /* background-color: var(--color-3v2); */
+    transform: scale(0.96);
+    border: 2px solid black;
+}
+
+/* ---------------------------------- POSSIBLE LETTERS */
+
+#possibleLetters {
+    /* display: flex; */
+    /* flex-direction: column; */
+}
+
+.letters-line {
+    display: flex;
+    justify-content: center;
+}
+
+.each-letter-box {
+    width: 10vh;
+    margin: 2px;
+    background-color: var(--color-3);
+    transition: 0.1s ease-in-out;
+}
+
+.each-letter-box:hover {
+    cursor: pointer;
+    transform: scale(0.95);
+    transition: 0.1s ease-in-out;
+}
+
+.each-box:hover {
+    cursor: pointer;
+    transform: scale(0.96);
+    border: 2px solid black;
+}
+
+.green-letter-box {
+    background-color: var(--green);
+}
+
+.yellow-letter-box {
+    background-color: var(--yellow);
+}
+
+.red-letter-box {
+    background-color: var(--red)
+}
+
+/* ------------------------------------------- BUTTONS */
+
+#buttons {
+    display: flex;
+    justify-content: center;
+    /* flex-direction: column; */
+}
+
+#buttons button {
+    margin: 0 10px;
+}
+
+/* ------------------------------------- POP UP */ 
+
+.popup {
+    display: none;
+    position: fixed; /* Posicionamento fixo */
+    top: 0;
+    left: 0;
+    width: 100%; /* Toma toda a largura */
+    height: 100%; /* Toma toda a altura */
+    background-color: rgba(0, 0, 0, 0.5); /* Fundo semi-transparente */
+    z-index: 1; /* Coloca o pop-up na frente de outros elementos */
+  }
+  
+  .popup-content {
+    background-color: white; /* Cor de fundo */
+    width: 300px; /* Largura */
+    padding: 20px; /* Espaçamento interno */
+    border-radius: 10px; /* Borda arredondada */
+    position: absolute; /* Posicionamento absoluto */
+    top: 50%; /* Posiciona no meio verticalmente */
+    left: 50%; /* Posiciona no meio horizontalmente */
+    transform: translate(-50%, -50%); /* Centraliza */
+  }
+  
+  .close {
+    float: right; /* Flutua para a direita */
+    cursor: pointer; /* Cursor de apontar */
+  }
+  
