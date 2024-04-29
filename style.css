@@ -46,7 +46,7 @@ section {
     box-shadow: var(--color-1);
 }
 
-h1, h2, h3 {
+h1, h2, h3, h4 {
     margin: 10px 0;
 }
 
@@ -75,6 +75,51 @@ button:hover {
     border-radius: 15px;
 }
 
+/* ------------------------------------ INFOS BOX */
+
+#infos-box {
+    display: flex;
+    flex-direction: column;
+}
+
+#infos-box h1, h2, h3, h4 {
+    margin: 0;
+}
+
+#infos {
+    margin: 10px 0;
+}
+
+#game-level {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.level-box {
+    border-radius: 10px;
+
+    box-shadow: rgba(0, 0, 0, 0.6) 0px 0px 5px 0px, rgba(0, 0, 0, 0.6) 0px 0px 1px 0px;
+    width: 10vh;
+    height: 5vh;
+    margin: 0 10px;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.selected {
+    box-shadow: rgba(0, 0, 0, 0.6) 0px 2px 4px 0px inset;
+    background-color: var(--color-5);
+}
+
+.level-box:hover {
+    box-shadow: rgba(0, 0, 0, 0.6) 0px 2px 4px 0px inset;
+    transition: 0.2s ease-in-out;
+    cursor: pointer;
+}
+
 /* ------------------------------------ GAME PAGE  */
 #gamePage {
     display: flex;
@@ -88,13 +133,8 @@ button:hover {
     margin: 10px;
 }
 
-#infos-box {
-    display: flex;
-    flex-direction: column;
-}
-
 #answersBox {
-    background-color: var(--color-4);
+    /* background-color: var(--color-4); */
     /* border: 2px solid blue; */
 
     width: fit-content;
@@ -185,6 +225,7 @@ button:hover {
     cursor: pointer;
     transform: scale(0.96);
     border: 2px solid black;
+    border-bottom: 1px solid black;
 }
 
 .green-letter-box {

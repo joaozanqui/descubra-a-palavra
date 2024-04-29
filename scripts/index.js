@@ -16,6 +16,8 @@ var words = [];
 // POSSIBLE LETTERS
 var possible_letters_arr = ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Z', 'X', 'C', 'V', 'B', 'N', 'M'];
 // var possible_letters_arr = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+// Game Level
+var level = 1;
 
 // ANSWER
 var answer;
@@ -29,6 +31,22 @@ var letters_box_arr = [];
 
 function gameCreate(createPossibleLetters = true) {
     hideHomePage();
+
+    var level_boxes = document.querySelectorAll('.level-box');
+    level_boxes.forEach(level_box => {
+        level_box.addEventListener('click', function () {
+            if (!this.classList.contains("selected")) {
+                level_boxes.forEach(other_level_box => {
+                    if (other_level_box !== this) {
+                        other_level_box.classList.remove("selected");
+                    }
+                });
+            }
+            level_box.classList.add("selected");
+            level = level_box.querySelector("h3").id;
+        });
+    });
+    
     answerTryCount = 0;
 
     const rangeInput = document.getElementById('rangeInput');
@@ -78,10 +96,12 @@ function answerBoxCreate() {
 
     box_arr.forEach((box) => {
         box.addEventListener("click", function (event) {
-            position = box_arr.indexOf(box);
-            selectTheBox();
+            console.log(box);
+            if (!box.classList.contains("green-letter-box") && !box.classList.contains("red-letter-box") && !box.classList.contains("yellow-letter-box")) {
+                position = box_arr.indexOf(box);
+                selectTheBox();
+            }
         })
-
     })
 }
 
@@ -141,7 +161,6 @@ function possibleLettersCreate() {
         })
     })
 }
-
 /* ------------------------------ GAMEPLAY FUNCTIONS ----------------- */
 
 var selectedBox = null;
