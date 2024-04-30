@@ -10,7 +10,7 @@ function hideHomePage() {
 }
 
 // WORD LENGTH 
-var value;
+var letters_quantity;
 // POSSIBLE WORDS
 var words = [];
 // POSSIBLE LETTERS
@@ -44,13 +44,14 @@ function gameCreate(createPossibleLetters = true) {
             }
             level_box.classList.add("selected");
             level = level_box.querySelector("h3").id;
+            console.log(level);
         });
     });
     
     answerTryCount = 0;
 
     const rangeInput = document.getElementById('rangeInput');
-    value = rangeInput.value;
+    letters_quantity = rangeInput.value;
     if (words.length == 0)
         wordsInValue();
 
@@ -74,7 +75,7 @@ function answerBoxCreate() {
     each_answer_box.classList.add("each-answer-box");
     each_answer_box.setAttribute("id", "answer-" + answerTryCount);
 
-    for (let i = 0; i < value; i++) {
+    for (let i = 0; i < letters_quantity; i++) {
         let each_box = document.createElement("div");
         each_box.classList.add("each-box");
         each_box.setAttribute("id", "box-" + i);
@@ -181,14 +182,14 @@ function selectTheBox(pos = position) {
 function movePosition(direction = "right") {
     if (direction == "right") {
         position++;
-        if (position > value - 1) {
+        if (position > letters_quantity - 1) {
             position = 0;
         }
     }
     else if (direction == "left") {
         position--;
         if (position < 0) {
-            position = value - 1;
+            position = letters_quantity - 1;
         }
     }
 
@@ -217,9 +218,9 @@ function writeLetter(letter_pressed) {
         if (selectedBox.querySelector("h1").textContent == "") {
             break;
         }
-    } while (timesMoved <= value);
+    } while (timesMoved <= letters_quantity);
 
-    if (timesMoved > value) {
+    if (timesMoved > letters_quantity) {
         if (position != letter.getAttribute("id"))
             movePosition("left");
         canMove = false;
@@ -230,7 +231,7 @@ function enterWord() {
     let isValid = true;
     let word = '';
 
-    for (let i = 0; i < value; i++) {
+    for (let i = 0; i < letters_quantity; i++) {
         if (letters_box_arr[i].textContent != "")
             word += letters_box_arr[i].textContent;
         else {
@@ -318,7 +319,7 @@ function wordsInValue() {
                 if (rawFile.status === 200 || rawFile.status == 0) {
                     var allWords = rawFile.responseText.split("\n");
                     for (let i = 0; i < allWords.length; i++) {
-                        if (allWords[i].length == value) {
+                        if (allWords[i].length == letters_quantity) {
                             words.push(removeAccents(allWords[i]).toUpperCase());
                         }
                     }
@@ -342,7 +343,7 @@ function hasWord(word) {
 /* ------------------ WORD COMPARE FUNCTIONS --------------------*/
 
 function hasLetter(letter, savedAnswer) {
-    for (let i = 0; i < value; i++) {
+    for (let i = 0; i < letters_quantity; i++) {
         if (savedAnswer[i] == letter)
             return i;
     }
@@ -359,7 +360,7 @@ function cleanClassesInLetters(currentLetterInAllLetters) {
 function wordCompare(word) {
     var savedAnswer = answer;
     var currentLetter;
-    for (let i = 0; i < value; i++) {
+    for (let i = 0; i < letters_quantity; i++) {
         if (word[i] == savedAnswer[i]) {
             let currentAnswer = document.getElementById("answer-" + answerTryCount);
             let currentLetter = currentAnswer.querySelector("#box-" + i);
@@ -375,7 +376,7 @@ function wordCompare(word) {
         }
     }
 
-    for (let i = 0; i < value; i++) {
+    for (let i = 0; i < letters_quantity; i++) {
         let positionLetter = hasLetter(word[i], savedAnswer);
         savedAnswer[i] = ".";
 
@@ -460,6 +461,6 @@ function updateHeaderInformations() {
     let num_tries = document.querySelector(".num-tries");
 
     num_words.textContent = words.length;
-    num_letters.textContent = value;
+    num_letters.textContent = letters_quantity;
     num_tries.textContent = answerTryCount;
 }
