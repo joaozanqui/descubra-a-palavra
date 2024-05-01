@@ -18,6 +18,10 @@ var possible_letters_arr = ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', 'A
 // var possible_letters_arr = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
 // Game Level
 var level = 1;
+var isPlaying = false;
+var isLevelChanged = false;
+var level_boxes = document.querySelectorAll('.level-box');
+var current_level_box = document.querySelector(".selected");
 
 // ANSWER
 var answer;
@@ -31,23 +35,30 @@ var letters_box_arr = [];
 
 function gameCreate(createPossibleLetters = true) {
     hideHomePage();
+    isPlaying = false;
+    isLevelChanged = false;
 
-    var level_boxes = document.querySelectorAll('.level-box');
     level_boxes.forEach(level_box => {
         level_box.addEventListener('click', function () {
             if (!this.classList.contains("selected")) {
-                level_boxes.forEach(other_level_box => {
-                    if (other_level_box !== this) {
-                        other_level_box.classList.remove("selected");
-                    }
-                });
-            }
-            level_box.classList.add("selected");
-            level = level_box.querySelector("h3").id;
-            console.log(level);
+
+                current_level_box = level_box;
+                isLevelChanged = true;
+
+                if (isPlaying) {
+                    openPopup("Para mudar nível será necessário reiniciar a partida");
+                    restart_btn[1].addEventListener("click", restartGame);
+                    back_btn[1].textContent = "VOLTAR";
+                    back_btn[1].removeEventListener("click", backToHomePage);
+                    back_btn[1].addEventListener("click", closePopup);
+                }
+                else {
+                    changeTheLevel();
+                }
+            }        
         });
     });
-    
+
     answerTryCount = 0;
 
     const rangeInput = document.getElementById('rangeInput');
@@ -58,46 +69,75 @@ function gameCreate(createPossibleLetters = true) {
     // answer = "FAROL"; 
     answer = randomWord();
 
+    answerBoxByLevelCreate();
     answerBoxCreate();
+
     if (createPossibleLetters)
         possibleLettersCreate();
 }
 
-function answerBoxCreate() {
+function changeTheLevel() {
+    level_boxes.forEach(other_level_box => {
+        if (other_level_box !== this) {
+            other_level_box.classList.remove("selected");
+        }
+    });
+
+    current_level_box.classList.add("selected");
+    level = current_level_box.querySelector("h3").id;
+    isLevelChanged = false;
+    restartGame();
+}
+
+function answerBoxByLevelCreate() {
     var answers_box = document.querySelector("#answersBox");
 
+    for (let i = 0; i < level; i++) {
+        let answer_box = document.createElement("div");
+        answer_box.classList.add("answer-box");
+
+        answers_box.appendChild(answer_box);
+    }
+}
+
+function answerBoxCreate() {
     updateHeaderInformations();
     box_arr = [];
     letters_box_arr = [];
     answerTryCount++;
 
-    let each_answer_box = document.createElement("div");
-    each_answer_box.classList.add("each-answer-box");
-    each_answer_box.setAttribute("id", "answer-" + answerTryCount);
+    var answers_box = document.querySelector("#answersBox");
+    var answer_box = answers_box.querySelectorAll(".answer-box");
 
-    for (let i = 0; i < letters_quantity; i++) {
-        let each_box = document.createElement("div");
-        each_box.classList.add("each-box");
-        each_box.setAttribute("id", "box-" + i);
+    for (let i = 0; i < level; i++) {
+        let each_answer_box = document.createElement("div");
+        each_answer_box.classList.add("each-answer-box");
+        each_answer_box.setAttribute("id", "answer-" + answerTryCount);
 
-        let letter = document.createElement("h1");
-        letter.setAttribute("id", "letter-" + i);
+        for (let i = 0; i < letters_quantity; i++) {
+            let each_box = document.createElement("div");
+            each_box.classList.add("each-box");
+            each_box.setAttribute("id", "box-" + i);
 
-        letters_box_arr.push(letter);
-        box_arr.push(each_box);
+            let letter = document.createElement("h1");
+            letter.setAttribute("id", "letter-" + i);
 
-        each_box.appendChild(letter);
-        each_answer_box.appendChild(each_box);
+            letters_box_arr.push(letter);
+            box_arr.push(each_box);
+
+            each_box.appendChild(letter);
+            each_answer_box.appendChild(each_box);
+        }
+
+        answer_box[i].appendChild(each_answer_box);
     }
-
-    answers_box.appendChild(each_answer_box);
 
     position = 0;
     selectTheBox(position);
 
     box_arr.forEach((box) => {
         box.addEventListener("click", function (event) {
-            console.log(box);
+            backspacePressed = false;
             if (!box.classList.contains("green-letter-box") && !box.classList.contains("red-letter-box") && !box.classList.contains("yellow-letter-box")) {
                 position = box_arr.indexOf(box);
                 selectTheBox();
@@ -170,13 +210,26 @@ var backspacePressed = false;
 var canMove = true;
 
 function selectTheBox(pos = position) {
+
     for (i in box_arr) {
         box_arr[i].classList.remove("selectedBox");
     }
     if (pos == -1)
         return;
+
+    if (pos < letters_quantity) {
+        for (let i = 0, j = 0; i < level; i++, j += parseInt(letters_quantity)) {
+            selectedBox = box_arr[pos + j];
+            selectedBox.classList.add("selectedBox");
+        }
+    }
+    else {
+        selectedBox = box_arr[pos];
+        selectedBox.classList.add("selectedBox");
+    }
+
+    //Define selectedBox as the selected in the first column  
     selectedBox = box_arr[pos];
-    selectedBox.classList.add("selectedBox");
 }
 
 function movePosition(direction = "right") {
@@ -204,9 +257,15 @@ function correctAnswer() {
 }
 
 function writeLetter(letter_pressed) {
-    let letter = selectedBox.querySelector("h1");
     let keyPressed = letter_pressed.toLocaleUpperCase();
-    letter.textContent = keyPressed;
+
+    for (let i = 0, j = 0; i < level; i++, j += parseInt(letters_quantity)) {
+        selectTheBox(position + j);
+        var letter = selectedBox.querySelector("h1");
+        letter.textContent = keyPressed;
+    }
+
+
     let timesMoved = 0;
     do {
         if (canMove) {
@@ -225,6 +284,8 @@ function writeLetter(letter_pressed) {
             movePosition("left");
         canMove = false;
     }
+
+    selectTheBox();
 }
 
 function enterWord() {
@@ -242,6 +303,7 @@ function enterWord() {
 
     if (isValid) {
         if (hasWord(word)) {
+            isPlaying = true;
             wordCompare(word);
             selectTheBox(-1);
             canMove = true;
@@ -259,10 +321,15 @@ function enterWord() {
 }
 
 function deleteLetter() {
-    let letter = selectedBox.querySelector("h1");
-    if ((backspacePressed || letter.textContent == "") && position != 0)
-        movePosition("left");
-    letter.textContent = "";
+    for (let i = 0, j = 0; i < level; i++, j += parseInt(letters_quantity)) {
+        selectTheBox(position + j);
+        let letter = selectedBox.querySelector("h1");
+
+        if ((backspacePressed || letter.textContent == "") && position != 0 && i == level - 1)
+            movePosition("left");
+        letter.textContent = "";
+    }
+    selectTheBox();
     backspacePressed = true;
     canMove = true;
 }
@@ -289,7 +356,10 @@ document.addEventListener("keydown", function (event) {
             enterWord();
         }
         else if (event.key == " ") {
-            console.log(event.target);
+            console.log(level);
+        }
+        else if (event.key == "ArrowUp") {
+            console.log(isPlaying);
         }
     }
 });
@@ -416,9 +486,20 @@ back_btn[0].addEventListener("click", backToHomePage);
 
 
 function restartGame() {
-    for (let i = 1; i <= answerTryCount; i++) {
-        let each_answer_box = document.querySelector("#answer-" + i);
-        each_answer_box.remove();
+
+    if(isLevelChanged) {
+        changeTheLevel();
+        return;
+    }
+
+    let each_answer_box = document.querySelectorAll(".each-answer-box");
+    for (let i = 0; i < each_answer_box.length; i++) {
+        each_answer_box[i].remove();
+    }
+
+    let answer_box = document.querySelectorAll(".answer-box");
+    for (let i = 0; i < answer_box.length; i++) {
+        answer_box[i].remove();
     }
 
     let letters_to_remove = document.querySelectorAll(".letters-line");
@@ -434,7 +515,9 @@ restart_btn[0].addEventListener("click", restartGame);
 function surrenderGame() {
     openPopup("A resposta era: " + answer);
     restart_btn[1].addEventListener("click", restartGame);
+    back_btn[1].textContent = "MENU PRINCIPAL";
     back_btn[1].addEventListener("click", backToHomePage);
+    back_btn[1].removeEventListener("click", closePopup);
 }
 surrender_btn.addEventListener("click", surrenderGame);
 

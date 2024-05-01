@@ -136,7 +136,11 @@ button:hover {
 #answersBox {
     /* background-color: var(--color-4); */
     /* border: 2px solid blue; */
+    display: flex;
+    
+}
 
+.answer-box {
     width: fit-content;
     position: relative;
     
@@ -146,8 +150,7 @@ button:hover {
     align-items: center;
 
     padding: 40px;
-    border-radius: 10px;
-}
+    border-radius: 10px;}
 
 .each-answer-box {
     /* background-color: var(--color-4); */
@@ -156,6 +159,7 @@ button:hover {
     width: fit-content; */
 
     display: flex;
+    background-color: rgb(158, 132, 132)rgb(158, 132, 132)rgb(158, 152, 152);
     justify-content: center;
     align-items: center;
 
