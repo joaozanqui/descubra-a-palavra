@@ -16,15 +16,19 @@ var words = [];
 // POSSIBLE LETTERS
 var possible_letters_arr = ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Z', 'X', 'C', 'V', 'B', 'N', 'M'];
 // var possible_letters_arr = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+// restart options
+var is_game_restarted = false;
+
 // Game Level
 var level = 1;
 var isPlaying = false;
 var isLevelChanged = false;
 var level_boxes = document.querySelectorAll('.level-box');
 var current_level_box = document.querySelector(".selected");
+var incomplete_answers = level;
 
 // ANSWER
-var answer;
+var answer = [];
 var answerTryCount;
 /* ------------------------- CREATE GAME STRUCTURE -----------------------*/
 
@@ -55,10 +59,13 @@ function gameCreate(createPossibleLetters = true) {
                 else {
                     changeTheLevel();
                 }
-            }        
+            }
         });
     });
 
+    incomplete_answers = level;
+
+    answer = [];
     answerTryCount = 0;
 
     const rangeInput = document.getElementById('rangeInput');
@@ -67,14 +74,44 @@ function gameCreate(createPossibleLetters = true) {
         wordsInValue();
 
     // answer = "FAROL"; 
-    answer = randomWord();
-
+    for (let i = 0; i < level; i++)
+        answer[i] = randomWord();
     answerBoxByLevelCreate();
     answerBoxCreate();
-
     if (createPossibleLetters)
         possibleLettersCreate();
 }
+
+document.addEventListener("keydown", function (event) {
+    closePopup();
+    if (document.querySelector("#gamePage").style.display != "none") {
+        if (event.key != "Backspace")
+        backspacePressed = false;
+    
+    if ((event.keyCode >= 65 && event.keyCode <= 90)) {
+            writeLetter(event.key);
+        }
+        else if (event.key === "ArrowRight") {
+            movePosition();
+        }
+        else if (event.key === "ArrowLeft") {
+            movePosition("left");
+        }
+        else if (event.key === "Backspace") {
+            deleteLetter();
+        }
+        else if (event.key === "Enter") {
+            event.preventDefault();
+            enterWord();
+        }
+        else if (event.key == " ") {
+            console.log(popup_message.style.top);
+        }
+        else if (event.key == "ArrowUp") {
+            console.log(position);
+        }
+    }
+});
 
 function changeTheLevel() {
     level_boxes.forEach(other_level_box => {
@@ -95,7 +132,7 @@ function answerBoxByLevelCreate() {
     for (let i = 0; i < level; i++) {
         let answer_box = document.createElement("div");
         answer_box.classList.add("answer-box");
-
+        answer_box.setAttribute("id", "answerBox" + i);
         answers_box.appendChild(answer_box);
     }
 }
@@ -109,18 +146,24 @@ function answerBoxCreate() {
     var answers_box = document.querySelector("#answersBox");
     var answer_box = answers_box.querySelectorAll(".answer-box");
 
+    answers_box.addEventListener('DOMNodeInserted', () => {
+        answers_box.scrollTop = answers_box.scrollHeight;
+    });
+
     for (let i = 0; i < level; i++) {
+        if (answer_box[i].classList.contains("correct-answer"))
+            continue;
         let each_answer_box = document.createElement("div");
         each_answer_box.classList.add("each-answer-box");
-        each_answer_box.setAttribute("id", "answer-" + answerTryCount);
+        each_answer_box.setAttribute("id", "answer" + i + "-" + answerTryCount);
 
-        for (let i = 0; i < letters_quantity; i++) {
+        for (let j = 0; j < letters_quantity; j++) {
             let each_box = document.createElement("div");
             each_box.classList.add("each-box");
-            each_box.setAttribute("id", "box-" + i);
+            each_box.setAttribute("id", "box" + i + "-" + j);
 
             let letter = document.createElement("h1");
-            letter.setAttribute("id", "letter-" + i);
+            letter.setAttribute("id", "letter-" + j);
 
             letters_box_arr.push(letter);
             box_arr.push(each_box);
@@ -140,6 +183,11 @@ function answerBoxCreate() {
             backspacePressed = false;
             if (!box.classList.contains("green-letter-box") && !box.classList.contains("red-letter-box") && !box.classList.contains("yellow-letter-box")) {
                 position = box_arr.indexOf(box);
+                if (position >= letters_quantity) {
+                    let answer_box_position = parseInt(box.parentNode.parentNode.id.replace("answerBox", "")) + 1 - (level - incomplete_answers);
+                    position -= (((answer_box_position - 1) * letters_quantity));
+                    console.log(position);
+                }
                 selectTheBox();
             }
         })
@@ -181,18 +229,22 @@ function possibleLettersCreate() {
         possible_letters.appendChild(letters_line);
     }
 
-    var enter_btn = document.querySelector("#enter");
-    var backspace_btn = document.querySelector("#backspace");
+    if (!is_game_restarted) {
 
-    enter_btn.addEventListener("click", function (event) {
-        console.log("enter");
-        enterWord();
-    })
+        var enter_btn = document.querySelector("#enter");
+        var backspace_btn = document.querySelector("#backspace");
 
-    backspace_btn.addEventListener("click", function (event) {
-        console.log("apagar");
-        deleteLetter();
-    })
+        enter_btn.addEventListener("click", function (event) {
+            console.log("enter");
+            enterWord();
+        })
+
+        backspace_btn.addEventListener("click", function (event) {
+            console.log("clicou\n");
+            deleteLetter();
+        })
+
+    }
 
     box_letters_arr.forEach((box) => {
         box.addEventListener("click", function (event) {
@@ -210,6 +262,7 @@ var backspacePressed = false;
 var canMove = true;
 
 function selectTheBox(pos = position) {
+    let answer_box = document.querySelectorAll(".answer-box");
 
     for (i in box_arr) {
         box_arr[i].classList.remove("selectedBox");
@@ -218,7 +271,8 @@ function selectTheBox(pos = position) {
         return;
 
     if (pos < letters_quantity) {
-        for (let i = 0, j = 0; i < level; i++, j += parseInt(letters_quantity)) {
+        for (let i = 0, j = 0; i < incomplete_answers; i++, j += parseInt(letters_quantity)) {
+
             selectedBox = box_arr[pos + j];
             selectedBox.classList.add("selectedBox");
         }
@@ -251,15 +305,21 @@ function movePosition(direction = "right") {
 
 function correctAnswer() {
     updateHeaderInformations();
-    openPopup("Parabéns! Você acertou a palavra " + answer + " na tentativa " + answerTryCount + "!!!");
+    let pupup_text;
+    if (level == 1)
+        pupup_text = "Parabéns! Você acertou a palavra\n" + answer + "\n na tentativa " + answerTryCount + "!!!";
+    else
+        pupup_text = "Parabéns! Você acertou as palavras\n" + answer + "\n na tentativa " + answerTryCount + "!!!";
+    openPopup(pupup_text);
     restart_btn[1].addEventListener("click", restartGame);
     back_btn[1].addEventListener("click", backToHomePage);
 }
 
 function writeLetter(letter_pressed) {
     let keyPressed = letter_pressed.toLocaleUpperCase();
+    let answer_box = document.querySelectorAll(".answer-box");
 
-    for (let i = 0, j = 0; i < level; i++, j += parseInt(letters_quantity)) {
+    for (let i = 0, j = 0; i < incomplete_answers; i++, j += parseInt(letters_quantity)) {
         selectTheBox(position + j);
         var letter = selectedBox.querySelector("h1");
         letter.textContent = keyPressed;
@@ -297,35 +357,35 @@ function enterWord() {
             word += letters_box_arr[i].textContent;
         else {
             isValid = false;
-            console.log("Incomplete word");
+            openMessagePopup("Somente palavras com " + letters_quantity + " letras");
+            break;
         }
     }
-
     if (isValid) {
         if (hasWord(word)) {
             isPlaying = true;
             wordCompare(word);
             selectTheBox(-1);
             canMove = true;
-            if (word == answer)
+            if (incomplete_answers == 0)
                 correctAnswer();
             else {
                 answerBoxCreate();
             }
         }
         else {
-            // funcao de palavra nao existe    
-            console.log("Invalid Word");
+            openMessagePopup("A palavra " + word + " não existe");
         }
     }
 }
 
 function deleteLetter() {
-    for (let i = 0, j = 0; i < level; i++, j += parseInt(letters_quantity)) {
+    let answer_box = document.querySelectorAll(".answer-box");
+    for (let i = 0, j = 0; i < incomplete_answers; i++, j += parseInt(letters_quantity)) {
         selectTheBox(position + j);
         let letter = selectedBox.querySelector("h1");
 
-        if ((backspacePressed || letter.textContent == "") && position != 0 && i == level - 1)
+        if ((backspacePressed || letter.textContent == "") && position != 0 && i == incomplete_answers - 1)
             movePosition("left");
         letter.textContent = "";
     }
@@ -333,36 +393,6 @@ function deleteLetter() {
     backspacePressed = true;
     canMove = true;
 }
-
-document.addEventListener("keydown", function (event) {
-    if (document.querySelector("#gamePage").style.display != "none") {
-        if (event.key != "Backspace")
-            backspacePressed = false;
-
-        if ((event.keyCode >= 65 && event.keyCode <= 90)) {
-            writeLetter(event.key);
-        }
-        else if (event.key === "ArrowRight") {
-            movePosition();
-        }
-        else if (event.key === "ArrowLeft") {
-            movePosition("left");
-        }
-        else if (event.key === "Backspace") {
-            deleteLetter();
-        }
-        else if (event.key === "Enter") {
-            event.preventDefault();
-            enterWord();
-        }
-        else if (event.key == " ") {
-            console.log(level);
-        }
-        else if (event.key == "ArrowUp") {
-            console.log(isPlaying);
-        }
-    }
-});
 
 /* -------------------------------- GAME LOGIC FUNCTIONS ------------------- */
 function randomWord() {
@@ -428,48 +458,61 @@ function cleanClassesInLetters(currentLetterInAllLetters) {
 }
 
 function wordCompare(word) {
-    var savedAnswer = answer;
-    var currentLetter;
-    for (let i = 0; i < letters_quantity; i++) {
-        if (word[i] == savedAnswer[i]) {
-            let currentAnswer = document.getElementById("answer-" + answerTryCount);
-            let currentLetter = currentAnswer.querySelector("#box-" + i);
+    let savedAnswer = answer.slice();
+    let answer_box = document.querySelectorAll(".answer-box");
+
+    for (let j = 0; j < level; j++) {
+        if (answer_box[j].classList.contains("correct-answer"))
+            continue;
+
+        for (let i = 0; i < letters_quantity; i++) {
+            if (word[i] == savedAnswer[j][i]) {
+                let currentAnswer = document.getElementById("answer" + j + "-" + answerTryCount);
+                let currentLetter = currentAnswer.querySelector("#box" + j + "-" + i);
+                let currentLetterInAllLetters = document.getElementById("box-" + word[i]);
+
+                currentLetter.classList.add("green-letter-box");
+                if (currentLetterInAllLetters.classList.contains("yellow-letter-box"))
+                    currentLetterInAllLetters.classList.remove("yellow-letter-box");
+                currentLetterInAllLetters.classList.add("green-letter-box");
+                savedAnswer[j] = savedAnswer[j].split('');
+                savedAnswer[j][i] = "#";
+                savedAnswer[j] = savedAnswer[j].join('');
+            }
+        }
+
+        for (let i = 0; i < letters_quantity; i++) {
+            let positionLetter = hasLetter(word[i], savedAnswer[j]);
+            savedAnswer[j][i] = ".";
+
+            let currentAnswer = document.getElementById("answer" + j + "-" + answerTryCount);
+            let currentLetter = currentAnswer.querySelector("#box" + j + "-" + i);
             let currentLetterInAllLetters = document.getElementById("box-" + word[i]);
 
-            currentLetter.classList.add("green-letter-box");
-            if (currentLetterInAllLetters.classList.contains("yellow-letter-box"))
-                currentLetterInAllLetters.classList.remove("yellow-letter-box");
-            currentLetterInAllLetters.classList.add("green-letter-box");
-            savedAnswer = savedAnswer.split('');
-            savedAnswer[i] = "#";
-            savedAnswer = savedAnswer.join('');
-        }
-    }
+            if (savedAnswer[j][i] != "#") {
+                if (positionLetter != -1) {
+                    currentLetter.classList.add("yellow-letter-box");
+                    if (!currentLetterInAllLetters.classList.contains("green-letter-box"))
+                        currentLetterInAllLetters.classList.add("yellow-letter-box");
 
-    for (let i = 0; i < letters_quantity; i++) {
-        let positionLetter = hasLetter(word[i], savedAnswer);
-        savedAnswer[i] = ".";
-
-        let currentAnswer = document.getElementById("answer-" + answerTryCount);
-        let currentLetter = currentAnswer.querySelector("#box-" + i);
-        let currentLetterInAllLetters = document.getElementById("box-" + word[i]);
-
-        if (savedAnswer[i] != "#") {
-            if (positionLetter != -1) {
-                currentLetter.classList.add("yellow-letter-box");
-                if (!currentLetterInAllLetters.classList.contains("green-letter-box"))
-                    currentLetterInAllLetters.classList.add("yellow-letter-box");
-
-                savedAnswer = savedAnswer.split('');
-                savedAnswer[positionLetter] = "@";
-                savedAnswer = savedAnswer.join('');
-            }
-            else {
-                currentLetter.classList.add("red-letter-box");
-                if (!currentLetterInAllLetters.classList.contains("green-letter-box") && !currentLetterInAllLetters.classList.contains("yellow-letter-box"))
-                    currentLetterInAllLetters.classList.add("red-letter-box");
+                    savedAnswer[j] = savedAnswer[j].split('');
+                    savedAnswer[j][positionLetter] = "@";
+                    savedAnswer[j] = savedAnswer[j].join('');
+                }
+                else {
+                    currentLetter.classList.add("red-letter-box");
+                    if (!currentLetterInAllLetters.classList.contains("green-letter-box") && !currentLetterInAllLetters.classList.contains("yellow-letter-box"))
+                        currentLetterInAllLetters.classList.add("red-letter-box");
+                }
             }
         }
+
+        if (word == answer[j]) {
+            let current_answer_box = document.querySelector("#answerBox" + j);
+            current_answer_box.classList.add("correct-answer");
+            incomplete_answers--;
+        }
+
     }
 }
 
@@ -486,8 +529,10 @@ back_btn[0].addEventListener("click", backToHomePage);
 
 
 function restartGame() {
+    console.log("restarted");
+    is_game_restarted = true;
 
-    if(isLevelChanged) {
+    if (isLevelChanged) {
         changeTheLevel();
         return;
     }
@@ -513,6 +558,7 @@ function restartGame() {
 restart_btn[0].addEventListener("click", restartGame);
 
 function surrenderGame() {
+    console.log("surrender");
     openPopup("A resposta era: " + answer);
     restart_btn[1].addEventListener("click", restartGame);
     back_btn[1].textContent = "MENU PRINCIPAL";
@@ -521,9 +567,10 @@ function surrenderGame() {
 }
 surrender_btn.addEventListener("click", surrenderGame);
 
-/* -------------------------- POP UP FUNCTIONS --------------------------- */
+/* -------------------------- POP UPs FUNCTIONS --------------------------- */
 
 var popup_surrender = document.getElementById("popupSurrender");
+var popup_message = document.getElementById("popupMessage");
 
 function openPopup(text) {
     popup_surrender.style.display = "block";
@@ -534,6 +581,14 @@ function openPopup(text) {
 
 function closePopup() {
     popup_surrender.style.display = "none";
+    popup_message.style.top = "-100px";
+}
+
+function openMessagePopup(text) {
+    popup_message.style.top = "0";
+
+    let popup_text = document.getElementById("popup-text");
+    popup_text.textContent = text;
 }
 
 /* -------------------------- HEADER INSTRUCTIONS --------------------------- */
