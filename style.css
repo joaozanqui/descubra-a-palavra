@@ -49,6 +49,7 @@ section {
 
 h1, h2, h3, h4 {
     margin: 10px 0;
+    position: relative;
 }
 
 input[type="range"] {
@@ -229,11 +230,16 @@ button:hover {
     justify-content: center;
 }
 
+.each-letter {
+    z-index: 1;
+}
+
 .each-letter-box {
     width: 10vh;
     margin: 2px;
     background-color: var(--color-3);
     transition: 0.1s ease-in-out;
+    position: relative;
 }
 
 .each-letter-box:hover {
@@ -247,6 +253,13 @@ button:hover {
     transform: scale(0.96);
     border: 2px solid black;
     border-bottom: 1px solid black;
+}
+
+.each-color {
+    margin: 0;
+    position: absolute;
+    top: 0;
+    height: 100%;
 }
 
 .green-letter-box {
@@ -295,6 +308,7 @@ button {
 #popupMessage {
     position: fixed;
     top: -100px;
+    z-index: 1; 
     transition: top 0.3s ease;
 
     background-color: var(--color-1);

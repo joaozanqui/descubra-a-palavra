@@ -44,6 +44,8 @@ function gameCreate(createPossibleLetters = true) {
 
     level_boxes.forEach(level_box => {
         level_box.addEventListener('click', function () {
+            closePopup();
+
             if (!this.classList.contains("selected")) {
 
                 current_level_box = level_box;
@@ -74,8 +76,8 @@ function gameCreate(createPossibleLetters = true) {
         wordsInValue();
 
     // answer = "FAROL"; 
-    for (let i = 0; i < level; i++)
-        answer[i] = randomWord();
+    for (let current_level = 0; current_level < level; current_level++)
+        answer[current_level] = randomWord();
     answerBoxByLevelCreate();
     answerBoxCreate();
     if (createPossibleLetters)
@@ -86,9 +88,9 @@ document.addEventListener("keydown", function (event) {
     closePopup();
     if (document.querySelector("#gamePage").style.display != "none") {
         if (event.key != "Backspace")
-        backspacePressed = false;
-    
-    if ((event.keyCode >= 65 && event.keyCode <= 90)) {
+            backspacePressed = false;
+
+        if ((event.keyCode >= 65 && event.keyCode <= 90)) {
             writeLetter(event.key);
         }
         else if (event.key === "ArrowRight") {
@@ -105,7 +107,7 @@ document.addEventListener("keydown", function (event) {
             enterWord();
         }
         else if (event.key == " ") {
-            console.log(popup_message.style.top);
+            console.log(answer);
         }
         else if (event.key == "ArrowUp") {
             console.log(position);
@@ -129,10 +131,10 @@ function changeTheLevel() {
 function answerBoxByLevelCreate() {
     var answers_box = document.querySelector("#answersBox");
 
-    for (let i = 0; i < level; i++) {
+    for (let current_level = 0; current_level < level; current_level++) {
         let answer_box = document.createElement("div");
         answer_box.classList.add("answer-box");
-        answer_box.setAttribute("id", "answerBox" + i);
+        answer_box.setAttribute("id", "answerBox" + current_level);
         answers_box.appendChild(answer_box);
     }
 }
@@ -150,20 +152,20 @@ function answerBoxCreate() {
         answers_box.scrollTop = answers_box.scrollHeight;
     });
 
-    for (let i = 0; i < level; i++) {
-        if (answer_box[i].classList.contains("correct-answer"))
+    for (let current_level = 0; current_level < level; current_level++) {
+        if (answer_box[current_level].classList.contains("correct-answer"))
             continue;
         let each_answer_box = document.createElement("div");
         each_answer_box.classList.add("each-answer-box");
-        each_answer_box.setAttribute("id", "answer" + i + "-" + answerTryCount);
+        each_answer_box.setAttribute("id", "answer" + current_level + "-" + answerTryCount);
 
-        for (let j = 0; j < letters_quantity; j++) {
+        for (let i = 0; i < letters_quantity; i++) {
             let each_box = document.createElement("div");
             each_box.classList.add("each-box");
-            each_box.setAttribute("id", "box" + i + "-" + j);
+            each_box.setAttribute("id", "box" + current_level + "-" + i);
 
             let letter = document.createElement("h1");
-            letter.setAttribute("id", "letter-" + j);
+            letter.setAttribute("id", "letter-" + i);
 
             letters_box_arr.push(letter);
             box_arr.push(each_box);
@@ -172,7 +174,7 @@ function answerBoxCreate() {
             each_answer_box.appendChild(each_box);
         }
 
-        answer_box[i].appendChild(each_answer_box);
+        answer_box[current_level].appendChild(each_answer_box);
     }
 
     position = 0;
@@ -181,6 +183,7 @@ function answerBoxCreate() {
     box_arr.forEach((box) => {
         box.addEventListener("click", function (event) {
             backspacePressed = false;
+            closePopup();
             if (!box.classList.contains("green-letter-box") && !box.classList.contains("red-letter-box") && !box.classList.contains("yellow-letter-box")) {
                 position = box_arr.indexOf(box);
                 if (position >= letters_quantity) {
@@ -248,6 +251,7 @@ function possibleLettersCreate() {
 
     box_letters_arr.forEach((box) => {
         box.addEventListener("click", function (event) {
+            closePopup();
             console.log(box)
             let letter_pressed = box.querySelector("h1").textContent;
             writeLetter(letter_pressed);
@@ -457,58 +461,115 @@ function cleanClassesInLetters(currentLetterInAllLetters) {
         currentLetterInAllLetters.classList.remove(classes[i]);
 }
 
+function paintingKeyboard(color, box, levelToPaint) {
+    let eachColorSize = 100 / level;
+    let create = false;
+    let colors = box.querySelectorAll("div");
+    // debugger;
+    if (colors.length <= levelToPaint)
+        create = true;
+
+    let current_color;
+    if (create) {
+        current_color = document.createElement("div");
+        current_color.setAttribute("id", "box-color-" + levelToPaint);
+    }
+    else {
+        current_color = box.querySelector("#box-color-" + levelToPaint);
+    }
+
+    current_color.style.left = (eachColorSize * levelToPaint) + "%";
+    current_color.style.width = (eachColorSize) + "%";
+
+    if (color == "green") {
+        if (current_color.classList.contains("yellow-letter-box"))
+            current_color.classList.remove("yellow-letter-box");
+        current_color.classList.add("green-letter-box");
+    }
+    else if (color == "yellow") {
+        if (!current_color.classList.contains("green-letter-box"))
+            current_color.classList.add("yellow-letter-box");
+    }
+    else if (color == "red") {
+        if (!current_color.classList.contains("green-letter-box") && !current_color.classList.contains("yellow-letter-box"))
+            current_color.classList.add("red-letter-box");
+    }
+    
+    if(create) {
+        current_color.classList.add("each-color");
+        box.appendChild(current_color);
+    }
+
+    // if (color == "green") {
+    //     if (box.classList.contains("yellow-letter-box"))
+    //         box.classList.remove("yellow-letter-box");
+    //     box.classList.add("green-letter-box");
+    // }
+    // else if(color == "yellow") {
+    //     if (!box.classList.contains("green-letter-box"))
+    //         box.classList.add("yellow-letter-box");
+    // }
+    // else if(color == "red") {
+    //     if (!box.classList.contains("green-letter-box") && !box.classList.contains("yellow-letter-box"))
+    //         box.classList.add("red-letter-box");
+    // }
+}
+
 function wordCompare(word) {
     let savedAnswer = answer.slice();
     let answer_box = document.querySelectorAll(".answer-box");
 
-    for (let j = 0; j < level; j++) {
-        if (answer_box[j].classList.contains("correct-answer"))
+    for (let current_level = 0; current_level < level; current_level++) {
+        if (answer_box[current_level].classList.contains("correct-answer")) {
+            for (let i = 0; i < letters_quantity; i++) {
+                let currentLetterInAllLetters = document.getElementById("box-" + word[i]);
+                paintingKeyboard("red", currentLetterInAllLetters, current_level);
+            }
+
             continue;
+        }
 
         for (let i = 0; i < letters_quantity; i++) {
-            if (word[i] == savedAnswer[j][i]) {
-                let currentAnswer = document.getElementById("answer" + j + "-" + answerTryCount);
-                let currentLetter = currentAnswer.querySelector("#box" + j + "-" + i);
+            if (word[i] == savedAnswer[current_level][i]) {
+                let currentAnswer = document.getElementById("answer" + current_level + "-" + answerTryCount);
+                let currentLetter = currentAnswer.querySelector("#box" + current_level + "-" + i);
                 let currentLetterInAllLetters = document.getElementById("box-" + word[i]);
 
                 currentLetter.classList.add("green-letter-box");
-                if (currentLetterInAllLetters.classList.contains("yellow-letter-box"))
-                    currentLetterInAllLetters.classList.remove("yellow-letter-box");
-                currentLetterInAllLetters.classList.add("green-letter-box");
-                savedAnswer[j] = savedAnswer[j].split('');
-                savedAnswer[j][i] = "#";
-                savedAnswer[j] = savedAnswer[j].join('');
+                paintingKeyboard("green", currentLetterInAllLetters, current_level);
+
+                savedAnswer[current_level] = savedAnswer[current_level].split('');
+                savedAnswer[current_level][i] = "#";
+                savedAnswer[current_level] = savedAnswer[current_level].join('');
             }
         }
 
         for (let i = 0; i < letters_quantity; i++) {
-            let positionLetter = hasLetter(word[i], savedAnswer[j]);
-            savedAnswer[j][i] = ".";
+            let positionLetter = hasLetter(word[i], savedAnswer[current_level]);
+            savedAnswer[current_level][i] = ".";
 
-            let currentAnswer = document.getElementById("answer" + j + "-" + answerTryCount);
-            let currentLetter = currentAnswer.querySelector("#box" + j + "-" + i);
+            let currentAnswer = document.getElementById("answer" + current_level + "-" + answerTryCount);
+            let currentLetter = currentAnswer.querySelector("#box" + current_level + "-" + i);
             let currentLetterInAllLetters = document.getElementById("box-" + word[i]);
 
-            if (savedAnswer[j][i] != "#") {
+            if (savedAnswer[current_level][i] != "#") {
                 if (positionLetter != -1) {
                     currentLetter.classList.add("yellow-letter-box");
-                    if (!currentLetterInAllLetters.classList.contains("green-letter-box"))
-                        currentLetterInAllLetters.classList.add("yellow-letter-box");
+                    paintingKeyboard("yellow", currentLetterInAllLetters, current_level);
 
-                    savedAnswer[j] = savedAnswer[j].split('');
-                    savedAnswer[j][positionLetter] = "@";
-                    savedAnswer[j] = savedAnswer[j].join('');
+                    savedAnswer[current_level] = savedAnswer[current_level].split('');
+                    savedAnswer[current_level][positionLetter] = "@";
+                    savedAnswer[current_level] = savedAnswer[current_level].join('');
                 }
                 else {
                     currentLetter.classList.add("red-letter-box");
-                    if (!currentLetterInAllLetters.classList.contains("green-letter-box") && !currentLetterInAllLetters.classList.contains("yellow-letter-box"))
-                        currentLetterInAllLetters.classList.add("red-letter-box");
+                    paintingKeyboard("red", currentLetterInAllLetters, current_level);
                 }
             }
         }
 
-        if (word == answer[j]) {
-            let current_answer_box = document.querySelector("#answerBox" + j);
+        if (word == answer[current_level]) {
+            let current_answer_box = document.querySelector("#answerBox" + current_level);
             current_answer_box.classList.add("correct-answer");
             incomplete_answers--;
         }
