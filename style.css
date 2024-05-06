@@ -92,7 +92,7 @@ button:hover {
     margin: 10px 0;
 }
 
-#game-level {
+#gameLevel {
     display: flex;
     justify-content: center;
     margin-top: 10px;

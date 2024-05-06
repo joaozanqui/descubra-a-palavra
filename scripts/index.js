@@ -21,15 +21,15 @@ var is_game_restarted = false;
 
 // Game Level
 var level = 1;
-var isPlaying = false;
-var isLevelChanged = false;
+var is_playing = false;
+var is_level_changed = false;
 var level_boxes = document.querySelectorAll('.level-box');
 var current_level_box = document.querySelector(".selected");
 var incomplete_answers = level;
 
 // ANSWER
 var answer = [];
-var answerTryCount;
+var answer_try_count;
 /* ------------------------- CREATE GAME STRUCTURE -----------------------*/
 
 var box_letters_arr = [];
@@ -39,8 +39,8 @@ var letters_box_arr = [];
 
 function gameCreate(createPossibleLetters = true) {
     hideHomePage();
-    isPlaying = false;
-    isLevelChanged = false;
+    is_playing = false;
+    is_level_changed = false;
 
     level_boxes.forEach(level_box => {
         level_box.addEventListener('click', function () {
@@ -49,14 +49,15 @@ function gameCreate(createPossibleLetters = true) {
             if (!this.classList.contains("selected")) {
 
                 current_level_box = level_box;
-                isLevelChanged = true;
+                is_level_changed = true;
 
-                if (isPlaying) {
+                // debugger;   
+                if (is_playing) {
                     openPopup("Para mudar nível será necessário reiniciar a partida");
-                    restart_btn[1].addEventListener("click", restartGame);
-                    back_btn[1].textContent = "VOLTAR";
-                    back_btn[1].removeEventListener("click", backToHomePage);
-                    back_btn[1].addEventListener("click", closePopup);
+                    restart_btn[0].addEventListener("click", restartGame);
+                    back_btn[0].textContent = "VOLTAR";
+                    back_btn[0].removeEventListener("click", backToHomePage);
+                    back_btn[0].addEventListener("click", closePopup);
                 }
                 else {
                     changeTheLevel();
@@ -68,7 +69,7 @@ function gameCreate(createPossibleLetters = true) {
     incomplete_answers = level;
 
     answer = [];
-    answerTryCount = 0;
+    answer_try_count = 0;
 
     const rangeInput = document.getElementById('rangeInput');
     letters_quantity = rangeInput.value;
@@ -88,7 +89,7 @@ document.addEventListener("keydown", function (event) {
     closePopup();
     if (document.querySelector("#gamePage").style.display != "none") {
         if (event.key != "Backspace")
-            backspacePressed = false;
+            backspace_pressed = false;
 
         if ((event.keyCode >= 65 && event.keyCode <= 90)) {
             writeLetter(event.key);
@@ -124,7 +125,7 @@ function changeTheLevel() {
 
     current_level_box.classList.add("selected");
     level = current_level_box.querySelector("h3").id;
-    isLevelChanged = false;
+    is_level_changed = false;
     restartGame();
 }
 
@@ -143,21 +144,17 @@ function answerBoxCreate() {
     updateHeaderInformations();
     box_arr = [];
     letters_box_arr = [];
-    answerTryCount++;
+    answer_try_count++;
 
     var answers_box = document.querySelector("#answersBox");
     var answer_box = answers_box.querySelectorAll(".answer-box");
-
-    answers_box.addEventListener('DOMNodeInserted', () => {
-        answers_box.scrollTop = answers_box.scrollHeight;
-    });
 
     for (let current_level = 0; current_level < level; current_level++) {
         if (answer_box[current_level].classList.contains("correct-answer"))
             continue;
         let each_answer_box = document.createElement("div");
         each_answer_box.classList.add("each-answer-box");
-        each_answer_box.setAttribute("id", "answer" + current_level + "-" + answerTryCount);
+        each_answer_box.setAttribute("id", "answer" + current_level + "-" + answer_try_count);
 
         for (let i = 0; i < letters_quantity; i++) {
             let each_box = document.createElement("div");
@@ -175,6 +172,8 @@ function answerBoxCreate() {
         }
 
         answer_box[current_level].appendChild(each_answer_box);
+
+        answers_box.scrollTop = answers_box.scrollHeight;
     }
 
     position = 0;
@@ -182,7 +181,7 @@ function answerBoxCreate() {
 
     box_arr.forEach((box) => {
         box.addEventListener("click", function (event) {
-            backspacePressed = false;
+            backspace_pressed = false;
             closePopup();
             if (!box.classList.contains("green-letter-box") && !box.classList.contains("red-letter-box") && !box.classList.contains("yellow-letter-box")) {
                 position = box_arr.indexOf(box);
@@ -201,7 +200,7 @@ function possibleLettersCreate() {
     var keyboard = document.querySelector("#keyboard");
     var possible_letters = document.querySelector("#possibleLetters");
 
-    var lineName;
+    let line_name;
     for (let i = 0; i < 26; i++) {
 
         let each_letter_box = document.createElement("div");
@@ -214,16 +213,16 @@ function possibleLettersCreate() {
         each_letter.textContent = possible_letters_arr[i];
 
         if (i == 0)
-            lineName = "line-1";
+            line_name = "line-1";
         else if (i == 10)
-            lineName = "line-2";
+            line_name = "line-2";
         else if (i == 19)
-            lineName = "line-3";
+            line_name = "line-3";
 
         if (i == 0 || i == 10 || i == 19) {
             var letters_line = document.createElement("div");
             letters_line.classList.add("letters-line");
-            letters_line.setAttribute("id", lineName);
+            letters_line.setAttribute("id", line_name);
         }
 
         each_letter_box.appendChild(each_letter);
@@ -260,10 +259,10 @@ function possibleLettersCreate() {
 }
 /* ------------------------------ GAMEPLAY FUNCTIONS ----------------- */
 
-var selectedBox = null;
+var selected_box = null;
 var position = 0;
-var backspacePressed = false;
-var canMove = true;
+var backspace_pressed = false;
+var can_move = true;
 
 function selectTheBox(pos = position) {
     let answer_box = document.querySelectorAll(".answer-box");
@@ -277,17 +276,17 @@ function selectTheBox(pos = position) {
     if (pos < letters_quantity) {
         for (let i = 0, j = 0; i < incomplete_answers; i++, j += parseInt(letters_quantity)) {
 
-            selectedBox = box_arr[pos + j];
-            selectedBox.classList.add("selectedBox");
+            selected_box = box_arr[pos + j];
+            selected_box.classList.add("selectedBox");
         }
     }
     else {
-        selectedBox = box_arr[pos];
-        selectedBox.classList.add("selectedBox");
+        selected_box = box_arr[pos];
+        selected_box.classList.add("selectedBox");
     }
 
     //Define selectedBox as the selected in the first column  
-    selectedBox = box_arr[pos];
+    selected_box = box_arr[pos];
 }
 
 function movePosition(direction = "right") {
@@ -311,42 +310,42 @@ function correctAnswer() {
     updateHeaderInformations();
     let pupup_text;
     if (level == 1)
-        pupup_text = "Parabéns! Você acertou a palavra\n" + answer + "\n na tentativa " + answerTryCount + "!!!";
+        pupup_text = "Parabéns! Você acertou a palavra\n" + answer + "\n na tentativa " + answer_try_count + "!!!";
     else
-        pupup_text = "Parabéns! Você acertou as palavras\n" + answer + "\n na tentativa " + answerTryCount + "!!!";
+        pupup_text = "Parabéns! Você acertou as palavras\n" + answer + "\n na tentativa " + answer_try_count + "!!!";
     openPopup(pupup_text);
-    restart_btn[1].addEventListener("click", restartGame);
-    back_btn[1].addEventListener("click", backToHomePage);
+    restart_btn[0].addEventListener("click", restartGame);
+    back_btn[0].addEventListener("click", backToHomePage);
 }
 
 function writeLetter(letter_pressed) {
-    let keyPressed = letter_pressed.toLocaleUpperCase();
+    let key_pressed = letter_pressed.toLocaleUpperCase();
     let answer_box = document.querySelectorAll(".answer-box");
 
     for (let i = 0, j = 0; i < incomplete_answers; i++, j += parseInt(letters_quantity)) {
         selectTheBox(position + j);
-        var letter = selectedBox.querySelector("h1");
-        letter.textContent = keyPressed;
+        var letter = selected_box.querySelector("h1");
+        letter.textContent = key_pressed;
     }
 
 
-    let timesMoved = 0;
+    let times_moved = 0;
     do {
-        if (canMove) {
-            timesMoved++;
+        if (can_move) {
+            times_moved++;
             movePosition();
         }
         else
             break;
-        if (selectedBox.querySelector("h1").textContent == "") {
+        if (selected_box.querySelector("h1").textContent == "") {
             break;
         }
-    } while (timesMoved <= letters_quantity);
+    } while (times_moved <= letters_quantity);
 
-    if (timesMoved > letters_quantity) {
+    if (times_moved > letters_quantity) {
         if (position != letter.getAttribute("id"))
             movePosition("left");
-        canMove = false;
+        can_move = false;
     }
 
     selectTheBox();
@@ -367,10 +366,10 @@ function enterWord() {
     }
     if (isValid) {
         if (hasWord(word)) {
-            isPlaying = true;
+            is_playing = true;
             wordCompare(word);
             selectTheBox(-1);
-            canMove = true;
+            can_move = true;
             if (incomplete_answers == 0)
                 correctAnswer();
             else {
@@ -387,21 +386,21 @@ function deleteLetter() {
     let answer_box = document.querySelectorAll(".answer-box");
     for (let i = 0, j = 0; i < incomplete_answers; i++, j += parseInt(letters_quantity)) {
         selectTheBox(position + j);
-        let letter = selectedBox.querySelector("h1");
+        let letter = selected_box.querySelector("h1");
 
-        if ((backspacePressed || letter.textContent == "") && position != 0 && i == incomplete_answers - 1)
+        if ((backspace_pressed || letter.textContent == "") && position != 0 && i == incomplete_answers - 1)
             movePosition("left");
         letter.textContent = "";
     }
     selectTheBox();
-    backspacePressed = true;
-    canMove = true;
+    backspace_pressed = true;
+    can_move = true;
 }
 
 /* -------------------------------- GAME LOGIC FUNCTIONS ------------------- */
 function randomWord() {
-    let randomIndex = Math.floor(Math.random() * words.length);
-    return words[randomIndex];
+    let random_index = Math.floor(Math.random() * words.length);
+    return words[random_index];
 }
 
 function removeAccents(word) {
@@ -421,10 +420,10 @@ function wordsInValue() {
         rawFile.onreadystatechange = function () {
             if (rawFile.readyState === 4) {
                 if (rawFile.status === 200 || rawFile.status == 0) {
-                    var allWords = rawFile.responseText.split("\n");
-                    for (let i = 0; i < allWords.length; i++) {
-                        if (allWords[i].length == letters_quantity) {
-                            words.push(removeAccents(allWords[i]).toUpperCase());
+                    var all_words = rawFile.responseText.split("\n");
+                    for (let i = 0; i < all_words.length; i++) {
+                        if (all_words[i].length == letters_quantity) {
+                            words.push(removeAccents(all_words[i]).toUpperCase());
                         }
                     }
                 }
@@ -446,26 +445,26 @@ function hasWord(word) {
 
 /* ------------------ WORD COMPARE FUNCTIONS --------------------*/
 
-function hasLetter(letter, savedAnswer) {
+function hasLetter(letter, saved_answer) {
     for (let i = 0; i < letters_quantity; i++) {
-        if (savedAnswer[i] == letter)
+        if (saved_answer[i] == letter)
             return i;
     }
 
     return -1;
 }
 
-function cleanClassesInLetters(currentLetterInAllLetters) {
+function cleanClassesInLetters(current_letter_in_all_letters) {
     classes = ["green-letter-box", "yellow-letter-box", "red-letter-box"];
     for (let i = 0; i < classes.length; i++)
-        currentLetterInAllLetters.classList.remove(classes[i]);
+        current_letter_in_all_letters.classList.remove(classes[i]);
 }
 
 function paintingKeyboard(color, box, levelToPaint) {
-    let eachColorSize = 100 / level;
+    let each_color_size = 100 / level;
     let create = false;
     let colors = box.querySelectorAll("div");
-    // debugger;
+
     if (colors.length <= levelToPaint)
         create = true;
 
@@ -478,8 +477,8 @@ function paintingKeyboard(color, box, levelToPaint) {
         current_color = box.querySelector("#box-color-" + levelToPaint);
     }
 
-    current_color.style.left = (eachColorSize * levelToPaint) + "%";
-    current_color.style.width = (eachColorSize) + "%";
+    current_color.style.left = (each_color_size * levelToPaint) + "%";
+    current_color.style.width = (each_color_size) + "%";
 
     if (color == "green") {
         if (current_color.classList.contains("yellow-letter-box"))
@@ -494,76 +493,62 @@ function paintingKeyboard(color, box, levelToPaint) {
         if (!current_color.classList.contains("green-letter-box") && !current_color.classList.contains("yellow-letter-box"))
             current_color.classList.add("red-letter-box");
     }
-    
-    if(create) {
+
+    if (create) {
         current_color.classList.add("each-color");
         box.appendChild(current_color);
     }
-
-    // if (color == "green") {
-    //     if (box.classList.contains("yellow-letter-box"))
-    //         box.classList.remove("yellow-letter-box");
-    //     box.classList.add("green-letter-box");
-    // }
-    // else if(color == "yellow") {
-    //     if (!box.classList.contains("green-letter-box"))
-    //         box.classList.add("yellow-letter-box");
-    // }
-    // else if(color == "red") {
-    //     if (!box.classList.contains("green-letter-box") && !box.classList.contains("yellow-letter-box"))
-    //         box.classList.add("red-letter-box");
-    // }
 }
 
 function wordCompare(word) {
-    let savedAnswer = answer.slice();
+    let saved_answer = answer.slice();
     let answer_box = document.querySelectorAll(".answer-box");
 
     for (let current_level = 0; current_level < level; current_level++) {
         if (answer_box[current_level].classList.contains("correct-answer")) {
             for (let i = 0; i < letters_quantity; i++) {
-                let currentLetterInAllLetters = document.getElementById("box-" + word[i]);
-                paintingKeyboard("red", currentLetterInAllLetters, current_level);
+                let current_letter_in_all_letters = document.getElementById("box-" + word[i]);
+                paintingKeyboard("red", current_letter_in_all_letters, current_level);
             }
 
             continue;
         }
 
         for (let i = 0; i < letters_quantity; i++) {
-            if (word[i] == savedAnswer[current_level][i]) {
-                let currentAnswer = document.getElementById("answer" + current_level + "-" + answerTryCount);
-                let currentLetter = currentAnswer.querySelector("#box" + current_level + "-" + i);
-                let currentLetterInAllLetters = document.getElementById("box-" + word[i]);
+            if (word[i] == saved_answer[current_level][i]) {
+                let current_answer = document.getElementById("answer" + current_level + "-" + answer_try_count);
+                let current_letter = current_answer.querySelector("#box" + current_level + "-" + i);
+                let current_letter_in_all_letters = document.getElementById("box-" + word[i]);
 
-                currentLetter.classList.add("green-letter-box");
-                paintingKeyboard("green", currentLetterInAllLetters, current_level);
+                current_letter.classList.add("green-letter-box");
+                paintingKeyboard("green", current_letter_in_all_letters, current_level);
 
-                savedAnswer[current_level] = savedAnswer[current_level].split('');
-                savedAnswer[current_level][i] = "#";
-                savedAnswer[current_level] = savedAnswer[current_level].join('');
+                saved_answer[current_level] = saved_answer[current_level].split('');
+                saved_answer[current_level][i] = "#";
+                saved_answer[current_level] = saved_answer[current_level].join('');
             }
         }
 
         for (let i = 0; i < letters_quantity; i++) {
-            let positionLetter = hasLetter(word[i], savedAnswer[current_level]);
-            savedAnswer[current_level][i] = ".";
+            let position_letter = hasLetter(word[i], saved_answer[current_level]);
+            saved_answer[current_level][i] = ".";
 
-            let currentAnswer = document.getElementById("answer" + current_level + "-" + answerTryCount);
-            let currentLetter = currentAnswer.querySelector("#box" + current_level + "-" + i);
-            let currentLetterInAllLetters = document.getElementById("box-" + word[i]);
+            let current_answer = document.getElementById("answer" + current_level + "-" + answer_try_count);
+            let current_letter = current_answer.querySelector("#box" + current_level + "-" + i);
+            let current_letter_in_all_letters = document.getElementById("box-" + word[i]);
 
-            if (savedAnswer[current_level][i] != "#") {
-                if (positionLetter != -1) {
-                    currentLetter.classList.add("yellow-letter-box");
-                    paintingKeyboard("yellow", currentLetterInAllLetters, current_level);
+            if (saved_answer[current_level][i] != "#") {
+                if (position_letter != -1) {
+                    current_letter.classList.add("yellow-letter-box");
+                    paintingKeyboard("yellow", current_letter_in_all_letters, current_level);
 
-                    savedAnswer[current_level] = savedAnswer[current_level].split('');
-                    savedAnswer[current_level][positionLetter] = "@";
-                    savedAnswer[current_level] = savedAnswer[current_level].join('');
+                    saved_answer[current_level] = saved_answer[current_level].split('');
+                    saved_answer[current_level][position_letter] = "@";
+                    saved_answer[current_level] = saved_answer[current_level].join('');
                 }
                 else {
-                    currentLetter.classList.add("red-letter-box");
-                    paintingKeyboard("red", currentLetterInAllLetters, current_level);
+                    current_letter.classList.add("red-letter-box");
+                    paintingKeyboard("red", current_letter_in_all_letters, current_level);
                 }
             }
         }
@@ -586,14 +571,14 @@ var surrender_btn = document.querySelector(".surrender-btn");
 function backToHomePage() {
     window.location.reload();
 }
-back_btn[0].addEventListener("click", backToHomePage);
+back_btn[1].addEventListener("click", backToHomePage);
 
 
 function restartGame() {
     console.log("restarted");
     is_game_restarted = true;
 
-    if (isLevelChanged) {
+    if (is_level_changed) {
         changeTheLevel();
         return;
     }
@@ -616,15 +601,15 @@ function restartGame() {
     closePopup();
     gameCreate();
 }
-restart_btn[0].addEventListener("click", restartGame);
+restart_btn[1].addEventListener("click", restartGame);
 
 function surrenderGame() {
     console.log("surrender");
     openPopup("A resposta era: " + answer);
-    restart_btn[1].addEventListener("click", restartGame);
-    back_btn[1].textContent = "MENU PRINCIPAL";
-    back_btn[1].addEventListener("click", backToHomePage);
-    back_btn[1].removeEventListener("click", closePopup);
+    restart_btn[0].addEventListener("click", restartGame);
+    back_btn[0].textContent = "MENU PRINCIPAL";
+    back_btn[0].addEventListener("click", backToHomePage);
+    back_btn[0].removeEventListener("click", closePopup);
 }
 surrender_btn.addEventListener("click", surrenderGame);
 
@@ -648,7 +633,7 @@ function closePopup() {
 function openMessagePopup(text) {
     popup_message.style.top = "0";
 
-    let popup_text = document.getElementById("popup-text");
+    let popup_text = document.getElementById("popupText");
     popup_text.textContent = text;
 }
 
@@ -661,5 +646,5 @@ function updateHeaderInformations() {
 
     num_words.textContent = words.length;
     num_letters.textContent = letters_quantity;
-    num_tries.textContent = answerTryCount;
+    num_tries.textContent = answer_try_count;
 }
