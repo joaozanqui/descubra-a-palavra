@@ -159,6 +159,7 @@ function answerBoxCreate() {
         for (let i = 0; i < letters_quantity; i++) {
             let each_box = document.createElement("div");
             each_box.classList.add("each-box");
+            each_box.classList.add("mobile-level-" + level);
             each_box.setAttribute("id", "box" + current_level + "-" + i);
 
             let letter = document.createElement("h1");

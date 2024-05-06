@@ -150,8 +150,6 @@ button:hover {
 }
 
 #answersBox {
-    /* background-color: var(--color-4); */
-    /* border: 2px solid blue; */
     display: flex;
     justify-content: center;
     max-height: 40vh;
@@ -168,14 +166,10 @@ button:hover {
     align-items: center;
 
     padding: 40px;
-    border-radius: 10px;}
+    border-radius: 10px;
+}
 
 .each-answer-box {
-    /* background-color: var(--color-4); */
-    /* border: 2px solid black; */
-    /* margin: 1px;
-    width: fit-content; */
-
     display: flex;
     background-color: rgb(158, 132, 132)rgb(158, 132, 132)rgb(158, 152, 152);
     justify-content: center;
@@ -183,11 +177,9 @@ button:hover {
 
 
     border: 2px solid black;
-    margin: 2px; /* Adiciona espaço entre os each-answer-box */
-    width: fit-content; /* Ajusta a largura ao tamanho dos each-box */
-    height: fit-content; /* Ajusta a altura ao tamanho dos each-box */
-    /* padding: 5px; */
-    /* border-radius: 10px; */
+    margin: 2px; 
+    width: fit-content;
+    height: fit-content;
 }
 
 .each-box {
@@ -218,11 +210,6 @@ button:hover {
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-#possibleLetters {
-    /* display: flex; */
-    /* flex-direction: column; */
 }
 
 .letters-line {
@@ -295,7 +282,7 @@ button {
     display: none;
     position: fixed; 
     background-color: rgba(0, 0, 0, 0.5); 
-    z-index: 1; 
+    z-index: 2; 
 }
 
 #popupSurrender {
@@ -344,3 +331,95 @@ button {
     cursor: pointer; 
 }
   
+/* ---------------------- MOBILE --------------------------------*/
+
+@media only screen and (max-width: 600px) {
+    #gamePage {
+        width: 450px;
+    }
+
+    #answersBox {
+        max-height: 30vh;
+        overflow-y: auto;
+    }
+    
+    .answer-box {
+        padding: 2px;
+        border-radius: 10px;
+    }
+
+    .each-box {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .each-answer-box {
+        border: 0.5px solid black;
+        margin: 1px;
+    }
+
+    .selectedBox {
+        border: 0.5px solid black;
+    }
+
+    .mobile-level-4 {
+        width: 20px;
+        height: 20px;
+    }
+
+    .mobile-level-4 > h1 {
+        font-size: 1rem;
+    }
+
+    .mobile-level-3 {
+        width: 30px;
+        height: 30px;
+    }
+
+    .mobile-level-2 {
+        width: 40px;
+        height: 40px;
+    }
+
+    .mobile-level-1 {
+        width: 50px;
+        height: 50px;
+    
+  }
+
+    #keyboard {
+        display: flex;
+        justify-content: center;
+        align-items: end;
+        width: 100%;
+    }
+
+    #keyboard img {
+        width: 4.5vh;
+    }
+
+    .keyboard-btns {
+        height: 4.5vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .letters-line {
+        display: flex;
+        justify-content: center;
+    }
+
+    .each-letter {
+        z-index: 1;
+    }
+
+    .each-letter-box {
+        width: 4.5vh;
+        margin: 1px;
+        background-color: var(--color-3);
+        transition: 0.1s ease-in-out;
+        position: relative;
+    }
+}
