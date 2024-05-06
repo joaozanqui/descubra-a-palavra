@@ -79,12 +79,12 @@ button:hover {
 
 /* ------------------------------------ INFOS BOX */
 
-#infos-box {
+#infosBox {
     display: flex;
     flex-direction: column;
 }
 
-#infos-box h1, h2, h3, h4 {
+#infosBox h1, h2, h3, h4 {
     margin: 0;
 }
 
@@ -334,6 +334,28 @@ button {
 /* ---------------------- MOBILE --------------------------------*/
 
 @media only screen and (max-width: 600px) {
+    #infosBox {
+        width: 350px;
+    }
+
+    #infosBox > h1 {
+        font-size: 1.2rem;
+    }
+
+    #infosBox > h3 , .level-box > h3{
+        font-size: 0.8rem;
+    }
+
+    #infos > h4 {
+        font-size: 0.6rem;
+    }
+
+    .level-box {
+        width: 8vh;
+        height: 4vh;
+        margin: 0 10px;
+    }
+
     #gamePage {
         width: 450px;
     }
@@ -364,29 +386,29 @@ button {
     }
 
     .mobile-level-4 {
+        width: 15px;
+        height: 15px;
+    }
+
+    .mobile-level-4 > h1 {
+        font-size: 0.7rem;
+    }
+
+    .mobile-level-3 {
         width: 20px;
         height: 20px;
     }
 
-    .mobile-level-4 > h1 {
-        font-size: 1rem;
-    }
-
-    .mobile-level-3 {
+    .mobile-level-2 {
         width: 30px;
         height: 30px;
-    }
-
-    .mobile-level-2 {
-        width: 40px;
-        height: 40px;
     }
 
     .mobile-level-1 {
         width: 50px;
         height: 50px;
     
-  }
+    }
 
     #keyboard {
         display: flex;
@@ -413,13 +435,36 @@ button {
 
     .each-letter {
         z-index: 1;
+        font-size: 1rem;
     }
 
     .each-letter-box {
         width: 4.5vh;
+        height: 4.5vh;
         margin: 1px;
         background-color: var(--color-3);
         transition: 0.1s ease-in-out;
         position: relative;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
+
+    #buttons > button {
+        /* background-color: red; */
+        /* width: 2vh; */
+        font-size: 0.5rem;
+        font-weight: bold;
+    }
+
+    #popupMessage {
+        font-size: 15px;
+        padding: 10px;
+    }
+
+    /* #popupSurrender {
+        width: 2vh; 
+        height: 2vh;
+    } */
 }

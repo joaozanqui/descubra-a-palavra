@@ -161,6 +161,12 @@ function answerBoxCreate() {
             each_box.classList.add("each-box");
             each_box.classList.add("mobile-level-" + level);
             each_box.setAttribute("id", "box" + current_level + "-" + i);
+            if(letters_quantity >= 6) {
+                let current_width = each_box.style.width;
+                each_box.style.width = (50 - level)/level + "px";
+                console.log(each_box);
+                console.log(current_width);
+            }
 
             let letter = document.createElement("h1");
             letter.setAttribute("id", "letter-" + i);
@@ -174,6 +180,7 @@ function answerBoxCreate() {
 
         answer_box[current_level].appendChild(each_answer_box);
 
+        
         answers_box.scrollTop = answers_box.scrollHeight;
     }
 
