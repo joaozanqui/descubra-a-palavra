@@ -584,6 +584,8 @@ back_btn[1].addEventListener("click", backToHomePage);
 
 function restartGame() {
     is_game_restarted = true;
+    can_move = true;
+    back_btn[0].textContent = "MENU PRINCIPAL";
 
     if (is_level_changed) {
         changeTheLevel();
