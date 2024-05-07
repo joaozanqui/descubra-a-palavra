@@ -165,8 +165,6 @@ function answerBoxCreate() {
             if(letters_quantity >= 6) {
                 let current_width = each_box.style.width;
                 each_box.style.width = (50 - level)/level + "px";
-                console.log(each_box);
-                console.log(current_width);
             }
 
             let letter = document.createElement("h1");
@@ -195,9 +193,13 @@ function answerBoxCreate() {
             if (!box.classList.contains("green-letter-box") && !box.classList.contains("red-letter-box") && !box.classList.contains("yellow-letter-box")) {
                 position = box_arr.indexOf(box);
                 if (position >= letters_quantity) {
-                    let answer_box_position = parseInt(box.parentNode.parentNode.id.replace("answerBox", "")) + 1 - (level - incomplete_answers);
+                    let current_answer_boxes = [];
+                    answer_box.forEach(function(each_box) {
+                        if (!each_box.classList.contains("correct-answer"))
+                            current_answer_boxes.push(each_box);
+                    });
+                    let answer_box_position = parseInt(current_answer_boxes.indexOf(box.parentNode.parentNode)) + 1;
                     position -= (((answer_box_position - 1) * letters_quantity));
-                    console.log(position);
                 }
                 selectTheBox();
             }
@@ -246,12 +248,10 @@ function possibleLettersCreate() {
         var backspace_btn = document.querySelector("#backspace");
 
         enter_btn.addEventListener("click", function (event) {
-            console.log("enter");
             enterWord();
         })
 
         backspace_btn.addEventListener("click", function (event) {
-            console.log("clicou\n");
             deleteLetter();
         })
 
@@ -260,7 +260,6 @@ function possibleLettersCreate() {
     box_letters_arr.forEach((box) => {
         box.addEventListener("click", function (event) {
             closePopup();
-            console.log(box)
             let letter_pressed = box.querySelector("h1").textContent;
             writeLetter(letter_pressed);
         })
@@ -584,7 +583,6 @@ back_btn[1].addEventListener("click", backToHomePage);
 
 
 function restartGame() {
-    console.log("restarted");
     is_game_restarted = true;
 
     if (is_level_changed) {
@@ -613,7 +611,6 @@ function restartGame() {
 restart_btn[1].addEventListener("click", restartGame);
 
 function surrenderGame() {
-    console.log("surrender");
     openPopup("A resposta era: " + answer);
     restart_btn[0].addEventListener("click", restartGame);
     back_btn[0].textContent = "MENU PRINCIPAL";
