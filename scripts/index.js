@@ -162,8 +162,8 @@ function answerBoxCreate() {
             each_box.classList.add("each-box");
             each_box.classList.add("mobile-level-" + level);
             each_box.setAttribute("id", "box" + current_level + "-" + i);
-            if(letters_quantity >= 6) {
-                let current_width = each_box.style.width;
+
+            if(letters_quantity >= 6 && window.innerWidth <= 600) {
                 each_box.style.width = (50 - level)/level + "px";
             }
 
