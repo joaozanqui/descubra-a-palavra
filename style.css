@@ -334,10 +334,6 @@ button {
 /* ---------------------- MOBILE --------------------------------*/
 
 @media only screen and (max-width: 600px) {
-    #infosBox {
-        width: 350px;
-    }
-
     #infosBox > h1 {
         font-size: 1.2rem;
     }
@@ -357,7 +353,7 @@ button {
     }
 
     #gamePage {
-        width: 450px;
+        width: 350px;
     }
 
     #answersBox {
@@ -390,7 +386,7 @@ button {
         height: 15px;
     }
 
-    .mobile-level-4 > h1 {
+    .mobile-level-4 > h1, .mobile-level-3 > h1 {
         font-size: 0.7rem;
     }
 

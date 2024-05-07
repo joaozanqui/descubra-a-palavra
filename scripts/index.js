@@ -38,6 +38,7 @@ var letters_box_arr = [];
 
 
 function gameCreate(createPossibleLetters = true) {
+    can_move = true;
     hideHomePage();
     is_playing = false;
     is_level_changed = false;
